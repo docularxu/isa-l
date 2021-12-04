@@ -31,7 +31,10 @@
 .global gf_2vect_mad_neon
 .type gf_2vect_mad_neon, %function
 
-
+/* Prototype declaration:
+void gf_2vect_mad_neon(int len, int vec, int vec_i, unsigned char *gftbls,
+			      unsigned char *src, unsigned char **dest);
+ */
 /* arguments */
 x_len		.req	x0
 x_vec		.req	x1

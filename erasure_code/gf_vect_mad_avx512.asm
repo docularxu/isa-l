@@ -165,11 +165,11 @@ func(gf_vect_mad_avx512)
 	je	.return_pass
 
 	;; Tail len
-	mov	pos, (1 << 63)
+	mov	pos, (1 << 63)	;sign-bit is set to 1
 	lea	tmp, [len + 64 - 1]
 	and	tmp, 63
-	sarx	pos, pos, tmp
-	kmovq	k1, pos
+	sarx	pos, pos, tmp	;Shift arithematic right (sign-bit is 1)
+	kmovq	k1, pos		;Move 64-bit mask to k1
 	mov	pos, len	;Overlapped offset length-64
 	jmp	.loop64		;Do one more overlap pass
 
