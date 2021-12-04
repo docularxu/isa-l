@@ -234,7 +234,7 @@ gf_5vect_dot_prod_neon:
 	/* v_p1_x */
 	add	x_tmp, x_tbl, x_vec_i, lsl #2
 	add	x_vec_i, x_vec_i, #8
-	ldp	q_gft_lo, q_gft_hi, [x_tmp]
+	ldp	q_gft_lo, q_gft_hi, [x_tmp] /* x_tbl + x_vec_i * 32 */
 	prfm	pldl3keep, [x_tmp, #32]
 	add	x_tmp, x_tmp, x_vec, lsl #2
 
@@ -259,7 +259,7 @@ gf_5vect_dot_prod_neon:
 	eor	v_p1_3.16b, v_p1_3.16b, v_tmp_hi.16b
 
 	/* v_p2_x */
-	ldp	q_gft_lo, q_gft_hi, [x_tmp]
+	ldp	q_gft_lo, q_gft_hi, [x_tmp] /* x_tbl + src_idx * x_vec_i * 32 + dest_idx * x_vec * 32 */
 	prfm	pldl3keep, [x_tmp, #32]
 	add	x_tmp, x_tmp, x_vec, lsl #2
 
