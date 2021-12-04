@@ -127,10 +127,19 @@ gf_vect_mad_neon:
 	blt	.return_fail
 
 	movi	v_mask0f.16b, #0x0f
+
+/* TODO: combine lsl and add into one 'ADD shifted register' instruction
+ADD <Xd>, <Xn>, <Xm>{, <shift> #<amount>}
+	add	x_tbl, x_tbl, x_vec_i, LSL #5	*/ /* x_tbl += x_vec_i * 2^5 */
+
 	lsl	x_vec_i, x_vec_i, #5
 	add	x_tbl, x_tbl, x_vec_i
+
 	add	x_src_end, x_src, x_len
 
+/* TODO: changes two ldr into one 'ldp'
+ *	ldp	q_gft1_lo, q_gft1_hi, [x_tbl]
+ */
 	ldr	q_gft1_lo, [x_tbl]
 	ldr	q_gft1_hi, [x_tbl, #16]
 
@@ -234,12 +243,16 @@ gf_vect_mad_neon:
 	str	q_d1_6, [x_dest1, #16*6]
 	str	q_d1_7, [x_dest1, #16*7]
 
+
 	add	x_src, x_src, #128
 	add	x_dest1, x_dest1, #128
 	cmp	x_src, x_src_end
 	bls	.Lloop128
 
 .Lloop128_end:
+	/* TODO： this is wrong. Restore of stack regiters should happen right
+	      before function end
+	 */
 	/* restore d8 ~ d15 */
 	ldp	d8,  d9,  [sp]
 	ldp	d10, d11, [sp, #16]
