@@ -213,6 +213,8 @@ gf_5vect_dot_prod_neon:
 	ldr	x_ptr, [x_src, x_vec_i]
 	add	x_ptr, x_ptr, x_pos
 
+/* TODO: why not use 'ldp', who can load 32 bytes into
+         two contiguous v-registers */
 	ldr	q_data_0, [x_ptr], #16
 	ldr	q_data_1, [x_ptr], #16
 	ldr	q_data_2, [x_ptr], #16

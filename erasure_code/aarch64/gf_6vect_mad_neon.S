@@ -192,7 +192,7 @@ gf_6vect_mad_neon:
 	ldr	q_gft4_lo, [x_tbl4]
 	ldr	q_gft4_hi, [x_tbl4, #16]
 
-.Lloop64_init:
+.Lloop64_init: /* TODO: this label has no use at all. Remove .Lloop64_init */
 	/* less than 64 bytes, goto Lloop16_init */
 	cmp	x_len, #64
 	blt	.Lloop16_init
@@ -228,6 +228,9 @@ gf_6vect_mad_neon:
 	ldr	q_d3_2, [x_dest3, #16*2]
 	ldr	q_d3_3, [x_dest3, #16*3]
 
+/* TODO: repetivly load tbl2 from memory in every .Lloop64? While nothing
+	is changed. Low performance. This must be fixed
+ */
 	ldr	q_gft2_lo, [x_tbl2]
 	ldr	q_gft2_hi, [x_tbl2, #16]
 	ldr	q_gft3_lo, [x_tbl3]

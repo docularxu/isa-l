@@ -102,7 +102,7 @@ gf_vect_mul_neon:
 
 
 .Lloop128_init:
-	/* less than 128 bytes, goto Lloop16_init */
+	/* less than 128 bytes, goto Lloop32_init */
 	cmp	x_len, #128
 	blt	.Lloop32_init
 
@@ -179,6 +179,7 @@ gf_vect_mul_neon:
 	str	q_data_6, [x_dest1, #16*6]
 	str	q_data_7, [x_dest1, #16*7]
 
+        /* TODO: can we use post-index LDR and STR to avoid add #128 */
 	add	x_src, x_src, #128
 	add	x_dest1, x_dest1, #128
 	cmp	x_src, x_src_end
