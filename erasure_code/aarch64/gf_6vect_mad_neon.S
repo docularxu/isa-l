@@ -32,6 +32,10 @@
 .type gf_6vect_mad_neon, %function
 
 
+/* Prototype declaration -
+   void gf_6vect_mad_neon(int len, int vec, int vec_i, unsigned char *gftbls,
+			      unsigned char *src, unsigned char **dest);
+ */
 /* arguments */
 x_len		.req	x0
 x_vec		.req	x1
@@ -174,9 +178,9 @@ gf_6vect_mad_neon:
 	movi	v_mask0f.16b, #0x0f
 	lsl	x_vec_i, x_vec_i, #5
 	lsl	x_vec, x_vec, #5
-	add	x_tbl1, x_tbl, x_vec_i
-	add	x_tbl2, x_tbl1, x_vec
-	add	x_tbl3, x_tbl2, x_vec
+	add	x_tbl1, x_tbl, x_vec_i     /* x_tbl1: g_tbls+vec_i*32 */
+	add	x_tbl2, x_tbl1, x_vec      /* x_tbl2: g_tbls+vec_i*32+k*32 */
+	add	x_tbl3, x_tbl2, x_vec      /* x_tbl3: g_tbls+vec_i*32+(k+1)*32 */
 	add	x_tbl4, x_tbl3, x_vec
 	add	x_tbl5, x_tbl4, x_vec
 	add	x_tbl6, x_tbl5, x_vec

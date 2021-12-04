@@ -30,10 +30,13 @@
 
 .global gf_vect_dot_prod_neon
 .type gf_vect_dot_prod_neon, %function
+/* extern void gf_vect_dot_prod_neon(int len, int vlen, unsigned char *gftbls,
+				  unsigned char **src, unsigned char *dest);
+ */
 
 /* arguments */
 x_len		.req	x0
-x_vec		.req	x1
+x_vec		.req	x1   /* number of "data blocks" */
 x_tbl		.req	x2
 x_src		.req	x3
 x_dest1		.req	x4
