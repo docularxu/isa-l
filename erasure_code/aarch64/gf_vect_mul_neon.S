@@ -97,12 +97,15 @@ gf_vect_mul_neon:
 
 	movi	v_mask0f.16b, #0x0f
 	add	x_src_end, x_src, x_len
+	/* TODO Load with NEON instruction ldp
+	 * ldp	q_gft1_lo, q_gft1_hi, [x_tbl]
+	 */
 	ldr	q_gft1_lo, [x_tbl]
 	ldr	q_gft1_hi, [x_tbl, #16]
 
 
 .Lloop128_init:
-	/* less than 128 bytes, goto Lloop16_init */
+	/* less than 128 bytes, goto Lloop32_init */
 	cmp	x_len, #128
 	blt	.Lloop32_init
 
@@ -179,6 +182,7 @@ gf_vect_mul_neon:
 	str	q_data_6, [x_dest1, #16*6]
 	str	q_data_7, [x_dest1, #16*7]
 
+        /* TODO: can we use post-index LDR and STR to avoid add #128 */
 	add	x_src, x_src, #128
 	add	x_dest1, x_dest1, #128
 	cmp	x_src, x_src_end
