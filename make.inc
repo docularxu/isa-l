@@ -94,15 +94,16 @@ ifeq ($(arch),noarch)
 endif
 
 # arch=aarch64 build options
+CFLAGS_aarch64 = -march=armv8-a+sve
 ifeq ($(lib_debug),1)
-  ASFLAGS_aarch64 = -g -c
+  ASFLAGS_aarch64 = -g -c -march=armv8-a+sve
 else
-  ASFLAGS_aarch64 = -c
+  ASFLAGS_aarch64 = -c -march=armv8-a+sve
 endif
 
 ARFLAGS_aarch64 = cr $@
 ifeq ($(arch),aarch64)
-  AS=$(CC) -D__ASSEMBLY__
+  AS=$(CC) -D__ASSEMBLY__ $(ASFLAGS_aarch64)
   SIM=
 endif
 
