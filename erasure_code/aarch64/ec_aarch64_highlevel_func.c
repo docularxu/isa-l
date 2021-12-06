@@ -27,6 +27,7 @@
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **********************************************************************/
 #include "erasure_code.h"
+#include <stdio.h>
 
 /*external function*/
 extern void gf_vect_dot_prod_neon(int len, int vlen, unsigned char *gftbls,
@@ -55,6 +56,7 @@ extern void gf_6vect_mad_neon(int len, int vec, int vec_i, unsigned char *gftbls
 void ec_encode_data_neon(int len, int k, int rows, unsigned char *g_tbls, unsigned char **data,
 			 unsigned char **coding)
 {
+	printf("Enter %s()\n", __func__);
 	if (len < 16) {
 		ec_encode_data_base(len, k, rows, g_tbls, data, coding);
 		return;
@@ -92,6 +94,7 @@ void ec_encode_data_neon(int len, int k, int rows, unsigned char *g_tbls, unsign
 void ec_encode_data_update_neon(int len, int k, int rows, int vec_i, unsigned char *g_tbls,
 				unsigned char *data, unsigned char **coding)
 {
+	printf("Enter %s()\n", __func__);
 	if (len < 16) {
 		ec_encode_data_update_base(len, k, rows, vec_i, g_tbls, data, coding);
 		return;
