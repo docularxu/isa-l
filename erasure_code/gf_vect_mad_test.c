@@ -39,9 +39,12 @@
 
 #ifndef FUNCTION_UNDER_TEST
 //By default, test multi-binary version
-# define FUNCTION_UNDER_TEST gf_vect_mad
-# define REF_FUNCTION gf_vect_dot_prod
-# define VECT 1
+# define FUNCTION_UNDER_TEST gf_6vect_mad_sve
+# define REF_FUNCTION gf_5vect_dot_prod
+# define REF_FUNCTION_5vect gf_5vect_dot_prod_neon
+# define REF_FUNCTION_vect gf_vect_dot_prod_neon
+
+# define VECT 6
 #endif
 
 #ifndef TEST_MIN_SIZE
@@ -81,6 +84,9 @@ typedef unsigned char u8;
 
 #if (VECT == 1)
 # define LAST_ARG *dest
+#elif (VECT == 6)
+# define LAST_ARG **dest
+# define LAST_ARG_vect *dest
 #else
 # define LAST_ARG **dest
 #endif
@@ -89,6 +95,10 @@ extern void FUNCTION_UNDER_TEST(int len, int vec, int vec_i, unsigned char *gftb
 				unsigned char *src, unsigned char LAST_ARG);
 extern void REF_FUNCTION(int len, int vlen, unsigned char *gftbls, unsigned char **src,
 			 unsigned char LAST_ARG);
+extern void REF_FUNCTION_5vect(int len, int vlen, unsigned char *gftbls, unsigned char **src,
+			 unsigned char LAST_ARG);
+extern void REF_FUNCTION_vect(int len, int vlen, unsigned char *gftbls, unsigned char **src,
+			 unsigned char LAST_ARG_vect);
 
 void dump(unsigned char *buf, int len)
 {
@@ -234,6 +244,9 @@ int main(int argc, char *argv[])
 
 #if (VECT == 1)
 	REF_FUNCTION(TEST_LEN, TEST_SOURCES, g_tbls, buffs, *dest_ref);
+#elif (VECT == 6)
+	REF_FUNCTION_5vect(TEST_LEN, TEST_SOURCES, g_tbls, buffs, dest_ref);
+	REF_FUNCTION_vect(TEST_LEN, TEST_SOURCES, &g_tbls[5 * 32 * TEST_SOURCES], buffs, dest_ref[5]);
 #else
 	REF_FUNCTION(TEST_LEN, TEST_SOURCES, g_tbls, buffs, dest_ref);
 #endif
