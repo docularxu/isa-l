@@ -48,4 +48,6 @@ lsrc_aarch64 += \
 		erasure_code/aarch64/gf_4vect_mad_sve.S \
 		erasure_code/aarch64/gf_5vect_mad_sve.S \
 		erasure_code/aarch64/gf_6vect_mad_sve.S \
+		erasure_code/aarch64/gf_vect_dot_prod_sve.S \
+		erasure_code/aarch64/gf_6vect_dot_prod_sve.S \
 		erasure_code/aarch64/ec_multibinary_arm.S

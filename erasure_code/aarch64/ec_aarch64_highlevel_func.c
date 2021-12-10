@@ -138,6 +138,8 @@ extern void gf_4vect_dot_prod_sve(int len, int vlen, unsigned char *gftbls,
 				   unsigned char **src, unsigned char **dest);
 extern void gf_5vect_dot_prod_sve(int len, int vlen, unsigned char *gftbls,
 				   unsigned char **src, unsigned char **dest);
+extern void gf_6vect_dot_prod_sve(int len, int vlen, unsigned char *gftbls,
+				   unsigned char **src, unsigned char **dest);
 extern void gf_vect_mad_sve(int len, int vec, int vec_i, unsigned char *gftbls,
 			     unsigned char *src, unsigned char *dest);
 extern void gf_2vect_mad_sve(int len, int vec, int vec_i, unsigned char *gftbls,
@@ -159,17 +161,24 @@ void ec_encode_data_sve(int len, int k, int rows, unsigned char *g_tbls, unsigne
 		return;
 	}
 
-	printf("Entered %s(), not implemented yet\n", __func__);
-	return;
 
-	/* 
-	while (rows > 5) {
-		gf_5vect_dot_prod_sve(len, k, g_tbls, data, coding);
-		g_tbls += 5 * k * 32;
-		coding += 5;
-		rows -= 5;
+	while (rows >= 6) {
+		gf_6vect_dot_prod_sve(len, k, g_tbls, data, coding);
+		g_tbls += 6 * k * 32;
+		coding += 6;
+		rows -= 6;
 	}
-	switch (rows) {
+	while (rows >= 1) {
+		gf_vect_dot_prod_sve(len, k, g_tbls, data, *coding);
+		g_tbls += 1 * k * 32;
+		coding += 1;
+		rows -= 1;
+	}
+
+/*	switch (rows) {
+	case 6:
+		gf_6vect_dot_prod_sve(len, k, g_tbls, data, coding);
+		break;
 	case 5:
 		gf_5vect_dot_prod_sve(len, k, g_tbls, data, coding);
 		break;
@@ -185,11 +194,10 @@ void ec_encode_data_sve(int len, int k, int rows, unsigned char *g_tbls, unsigne
 	case 1:
 		gf_vect_dot_prod_sve(len, k, g_tbls, data, *coding);
 		break;
-	case 0:
-		break;
 	default:
 		break;
-	} */
+	}
+*/
 }
 
 void ec_encode_data_update_sve(int len, int k, int rows, int vec_i, unsigned char *g_tbls,
@@ -224,7 +232,7 @@ void ec_encode_data_update_sve(int len, int k, int rows, int vec_i, unsigned cha
 	case 1:
 		gf_vect_mad_sve(len, k, vec_i, g_tbls, data, *coding);
 		break;
-	case 0:
+	default:
 		break;
 	}
 }
