@@ -61,9 +61,6 @@ z_src_lo	.req	z2
 z_src_hi	.req	z_src
 
 z_dest1		.req	z3
-/* TODO: z_tmp1_lo and _hi can reuse z_src_lo and _hi */
-z_tmp1_lo	.req	z4
-z_tmp1_hi	.req	z5
 
 z_gft1_lo	.req	z6
 z_gft1_hi	.req	z7
@@ -154,39 +151,37 @@ gf_5vect_mad_sve:
 
 	/* dest1 */
 	/* table indexing, ie. gf(2^8) multiplication */
-	tbl	z_tmp1_lo.b, {z_gft1_lo.b}, z_src_lo.b
-	tbl	z_tmp1_hi.b, {z_gft1_hi.b}, z_src_hi.b
+	tbl	z_gft1_lo.b, {z_gft1_lo.b}, z_src_lo.b
+	tbl	z_gft1_hi.b, {z_gft1_hi.b}, z_src_hi.b
 	/* exclusive or, ie. gf(2^8) add */
-	eor	z_dest1.d, z_tmp1_lo.d, z_dest1.d
-	eor	z_dest1.d, z_tmp1_hi.d, z_dest1.d
+	eor	z_dest1.d, z_gft1_lo.d, z_dest1.d
+	eor	z_dest1.d, z_gft1_hi.d, z_dest1.d
 
 	/* dest2 */
-	tbl	z_tmp1_lo.b, {z_gft2_lo.b}, z_src_lo.b
-	tbl	z_tmp1_hi.b, {z_gft2_hi.b}, z_src_hi.b
-	eor	z_dest2.d, z_tmp1_lo.d, z_dest2.d
-	eor	z_dest2.d, z_tmp1_hi.d, z_dest2.d
+	tbl	z_gft2_lo.b, {z_gft2_lo.b}, z_src_lo.b
+	tbl	z_gft2_hi.b, {z_gft2_hi.b}, z_src_hi.b
+	eor	z_dest2.d, z_gft2_lo.d, z_dest2.d
+	eor	z_dest2.d, z_gft2_hi.d, z_dest2.d
 
 	/* dest3 */
-	tbl	z_tmp1_lo.b, {z_gft3_lo.b}, z_src_lo.b
-	tbl	z_tmp1_hi.b, {z_gft3_hi.b}, z_src_hi.b
-	eor	z_dest3.d, z_tmp1_lo.d, z_dest3.d
-	eor	z_dest3.d, z_tmp1_hi.d, z_dest3.d
+	tbl	z_gft3_lo.b, {z_gft3_lo.b}, z_src_lo.b
+	tbl	z_gft3_hi.b, {z_gft3_hi.b}, z_src_hi.b
+	eor	z_dest3.d, z_gft3_lo.d, z_dest3.d
+	eor	z_dest3.d, z_gft3_hi.d, z_dest3.d
 
 	/* dest4 */
-	tbl	z_tmp1_lo.b, {z_gft4_lo.b}, z_src_lo.b
-	tbl	z_tmp1_hi.b, {z_gft4_hi.b}, z_src_hi.b
-	eor	z_dest4.d, z_tmp1_lo.d, z_dest4.d
-	eor	z_dest4.d, z_tmp1_hi.d, z_dest4.d
+	tbl	z_gft4_lo.b, {z_gft4_lo.b}, z_src_lo.b
+	tbl	z_gft4_hi.b, {z_gft4_hi.b}, z_src_hi.b
+	eor	z_dest4.d, z_gft4_lo.d, z_dest4.d
+	eor	z_dest4.d, z_gft4_hi.d, z_dest4.d
 
 	/* dest5 */
-	tbl	z_tmp1_lo.b, {z_gft5_lo.b}, z_src_lo.b
-	tbl	z_tmp1_hi.b, {z_gft5_hi.b}, z_src_hi.b
-	eor	z_dest5.d, z_tmp1_lo.d, z_dest5.d
-	eor	z_dest5.d, z_tmp1_hi.d, z_dest5.d
+	tbl	z_gft5_lo.b, {z_gft5_lo.b}, z_src_lo.b
+	tbl	z_gft5_hi.b, {z_gft5_hi.b}, z_src_hi.b
+	eor	z_dest5.d, z_gft5_lo.d, z_dest5.d
+	eor	z_dest5.d, z_gft5_hi.d, z_dest5.d
 
 	/* store dest data, governed by p0 */
-/* TODO: test whether a Memory fault happens if p0 not ALL true, and cross the memory border
- */
 	st1b	z_dest1.b, p0, [x_dest1, x_pos]
 	st1b	z_dest2.b, p0, [x_dest2, x_pos]
 	st1b	z_dest3.b, p0, [x_dest3, x_pos]

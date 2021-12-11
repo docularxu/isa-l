@@ -56,14 +56,13 @@ z_src_lo	.req	z2
 z_src_hi	.req	z_src
 
 z_dest		.req	z3
-/* TODO: z_tmp1_lo and _hi can reuse z_src_lo and _hi */
-z_tmp1_lo	.req	z4
-z_tmp1_hi	.req	z5
 
 z_gft1_lo	.req	z6
 z_gft1_hi	.req	z7
 q_gft1_lo	.req	q6
 q_gft1_hi	.req	q7
+z_tmp1_lo	.req	z_gft1_lo
+z_tmp1_hi	.req	z_gft1_hi
 
 gf_vect_mad_sve:
 	/* less than 16 bytes, return_fail */
@@ -115,8 +114,6 @@ gf_vect_mad_sve:
 	eor	z_dest.d, z_tmp1_hi.d, z_dest.d
 
 	/* store dest data, governed by p0 */
-/* TODO: test whether a Memory fault happens if p0 not ALL true, and cross the memory border
- */
 	st1b	z_dest.b, p0, [x_dest, x_pos]
 	/* increment one vector length */
 	incb	x_pos

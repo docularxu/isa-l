@@ -73,13 +73,11 @@ z_src_lo	.req	z2
 z_src_hi	.req	z_src
 
 z_dest1		.req	z3
-z_tmp1_lo	.req	z4
-z_tmp1_hi	.req	z5
 
-z_gft1_lo	.req	z6
-z_gft1_hi	.req	z7
-q_gft1_lo	.req	q6
-q_gft1_hi	.req	q7
+z_gft1_lo	.req	z4
+z_gft1_hi	.req	z5
+q_gft1_lo	.req	q4
+q_gft1_hi	.req	q5
 
 /* bottom 64-bit of v8..v15 must be preserved if used */
 z_gft2_lo	.req	z17
@@ -174,41 +172,41 @@ gf_6vect_dot_prod_sve:
 
 	/* dest 1 */
 	/* table indexing, ie. gf(2^8) multiplication */
-	tbl	z_tmp1_lo.b, {z_gft1_lo.b}, z_src_lo.b
-	tbl	z_tmp1_hi.b, {z_gft1_hi.b}, z_src_hi.b
+	tbl	z_gft1_lo.b, {z_gft1_lo.b}, z_src_lo.b
+	tbl	z_gft1_hi.b, {z_gft1_hi.b}, z_src_hi.b
 	/* exclusive or, ie. gf(2^8) add */
-	eor	z_dest1.d, z_tmp1_lo.d, z_dest1.d
-	eor	z_dest1.d, z_tmp1_hi.d, z_dest1.d
+	eor	z_dest1.d, z_gft1_lo.d, z_dest1.d
+	eor	z_dest1.d, z_gft1_hi.d, z_dest1.d
 
 	/* dest 2 */
-	tbl	z_tmp1_lo.b, {z_gft2_lo.b}, z_src_lo.b
-	tbl	z_tmp1_hi.b, {z_gft2_hi.b}, z_src_hi.b
-	eor	z_dest2.d, z_tmp1_lo.d, z_dest2.d
-	eor	z_dest2.d, z_tmp1_hi.d, z_dest2.d
+	tbl	z_gft2_lo.b, {z_gft2_lo.b}, z_src_lo.b
+	tbl	z_gft2_hi.b, {z_gft2_hi.b}, z_src_hi.b
+	eor	z_dest2.d, z_gft2_lo.d, z_dest2.d
+	eor	z_dest2.d, z_gft2_hi.d, z_dest2.d
 
 	/* dest 3 */
-	tbl	z_tmp1_lo.b, {z_gft3_lo.b}, z_src_lo.b
-	tbl	z_tmp1_hi.b, {z_gft3_hi.b}, z_src_hi.b
-	eor	z_dest3.d, z_tmp1_lo.d, z_dest3.d
-	eor	z_dest3.d, z_tmp1_hi.d, z_dest3.d
+	tbl	z_gft3_lo.b, {z_gft3_lo.b}, z_src_lo.b
+	tbl	z_gft3_hi.b, {z_gft3_hi.b}, z_src_hi.b
+	eor	z_dest3.d, z_gft3_lo.d, z_dest3.d
+	eor	z_dest3.d, z_gft3_hi.d, z_dest3.d
 
 	/* dest 4 */
-	tbl	z_tmp1_lo.b, {z_gft4_lo.b}, z_src_lo.b
-	tbl	z_tmp1_hi.b, {z_gft4_hi.b}, z_src_hi.b
-	eor	z_dest4.d, z_tmp1_lo.d, z_dest4.d
-	eor	z_dest4.d, z_tmp1_hi.d, z_dest4.d
+	tbl	z_gft4_lo.b, {z_gft4_lo.b}, z_src_lo.b
+	tbl	z_gft4_hi.b, {z_gft4_hi.b}, z_src_hi.b
+	eor	z_dest4.d, z_gft4_lo.d, z_dest4.d
+	eor	z_dest4.d, z_gft4_hi.d, z_dest4.d
 
 	/* dest 5 */
-	tbl	z_tmp1_lo.b, {z_gft5_lo.b}, z_src_lo.b
-	tbl	z_tmp1_hi.b, {z_gft5_hi.b}, z_src_hi.b
-	eor	z_dest5.d, z_tmp1_lo.d, z_dest5.d
-	eor	z_dest5.d, z_tmp1_hi.d, z_dest5.d
+	tbl	z_gft5_lo.b, {z_gft5_lo.b}, z_src_lo.b
+	tbl	z_gft5_hi.b, {z_gft5_hi.b}, z_src_hi.b
+	eor	z_dest5.d, z_gft5_lo.d, z_dest5.d
+	eor	z_dest5.d, z_gft5_hi.d, z_dest5.d
 
 	/* dest 6 */
-	tbl	z_tmp1_lo.b, {z_gft6_lo.b}, z_src_lo.b
-	tbl	z_tmp1_hi.b, {z_gft6_hi.b}, z_src_hi.b
-	eor	z_dest6.d, z_tmp1_lo.d, z_dest6.d
-	eor	z_dest6.d, z_tmp1_hi.d, z_dest6.d
+	tbl	z_gft6_lo.b, {z_gft6_lo.b}, z_src_lo.b
+	tbl	z_gft6_hi.b, {z_gft6_hi.b}, z_src_hi.b
+	eor	z_dest6.d, z_gft6_lo.d, z_dest6.d
+	eor	z_dest6.d, z_gft6_hi.d, z_dest6.d
 
 	add	x_vec_i, x_vec_i, #8		/* move x_vec_i to next */
 	cmp	x_vec_i, x_vec

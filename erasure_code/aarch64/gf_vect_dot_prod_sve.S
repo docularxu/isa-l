@@ -58,14 +58,11 @@ z_src_lo	.req	z2
 z_src_hi	.req	z_src
 
 z_dest		.req	z3
-/* TODO: z_tmp1_lo and _hi can reuse z_src_lo and _hi */
-z_tmp1_lo	.req	z4
-z_tmp1_hi	.req	z5
 
-z_gft1_lo	.req	z6
-z_gft1_hi	.req	z7
-q_gft1_lo	.req	q6
-q_gft1_hi	.req	q7
+z_gft1_lo	.req	z4
+z_gft1_hi	.req	z5
+q_gft1_lo	.req	q4
+q_gft1_hi	.req	q5
 
 gf_vect_dot_prod_sve:
 	/* less than 16 bytes, return_fail */
@@ -102,12 +99,12 @@ gf_vect_dot_prod_sve:
 	lsr	z_src_hi.b, z_src.b, #4
 
 	/* table indexing, ie. gf(2^8) multiplication */
-	tbl	z_tmp1_lo.b, {z_gft1_lo.b}, z_src_lo.b
-	tbl	z_tmp1_hi.b, {z_gft1_hi.b}, z_src_hi.b
+	tbl	z_gft1_lo.b, {z_gft1_lo.b}, z_src_lo.b
+	tbl	z_gft1_hi.b, {z_gft1_hi.b}, z_src_hi.b
 
 	/* exclusive or, ie. gf(2^8) add */
-	eor	z_dest.d, z_tmp1_lo.d, z_dest.d
-	eor	z_dest.d, z_tmp1_hi.d, z_dest.d
+	eor	z_dest.d, z_gft1_lo.d, z_dest.d
+	eor	z_dest.d, z_gft1_hi.d, z_dest.d
 
 	cmp	x_vec_i, x_vec
 	blt	.Lloopsve_vl_vects
