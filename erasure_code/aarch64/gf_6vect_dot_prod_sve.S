@@ -124,17 +124,17 @@ gf_6vect_dot_prod_sve:
 	mov	z_mask0f.b, #0x0f		/* z_mask0f = 0x0F0F...0F */
 	mov	x_pos, #0
 	lsl	x_vec, x_vec, #3
-	ldr	x_dest1, [x_dest, #8*0]
-	ldr	x_dest2, [x_dest, #8*1]
-	ldr	x_dest3, [x_dest, #8*2]
-	ldr	x_dest4, [x_dest, #8*3]
-	ldr	x_dest5, [x_dest, #8*4]
-	ldr	x_dest6, [x_dest, #8*5]		/* x_dest6 reuses x_dest */
+	ldp	x_dest1, x_dest2, [x_dest, #8*0]
+	ldp	x_dest3, x_dest4, [x_dest, #8*2]
+	ldp	x_dest5, x_dest6, [x_dest, #8*4]	/* x_dest6 reuses x_dest */
 
 /* Loop 1: x_len, vector length */
 .Lloopsve_vl:
 	whilelo	p0.b, x_pos, x_len
 	b.none	.return_pass
+
+	mov	x_vec_i, #0			/* clear x_vec_i */
+	ldr	x_ptr, [x_src, x_vec_i]		/* x_ptr: src base addr. */
 
 	mov	z_dest1.b, #0			/* clear z_dest1 */
 	mov	z_dest2.b, #0			/* clear z_dest2 */
@@ -142,7 +142,6 @@ gf_6vect_dot_prod_sve:
 	mov	z_dest4.b, #0			/* clear z_dest4 */
 	mov	z_dest5.b, #0			/* clear z_dest5 */
 	mov	z_dest6.b, #0			/* clear z_dest6 */
-	mov	x_vec_i, #0			/* clear x_vec_i */
 
 	/* gf_tbl base = (x_tbl + dest_idx * x_vec * 32) */
 	mov	x_tbl1, x_tbl			/* reset x_tbl1 */
@@ -154,21 +153,25 @@ gf_6vect_dot_prod_sve:
 
 /* Loop 2: x_vec, number of source vectors (ie. data blocks) */
 .Lloopsve_vl_vects:
-	ldr	x_ptr, [x_src, x_vec_i]		/* x_ptr: src base addr. */
 	/* load src data, governed by p0 */
 	ld1b	z_src.b,  p0/z, [x_ptr, x_pos]	/* load from: src base + pos offset */
 	/* split 4-bit lo; 4-bit hi */
 	and	z_src_lo.d, z_src.d, z_mask0f.d
 	lsr	z_src_hi.b, z_src.b, #4
 
+
 	/* gf_tbl addr: (x_tbl + dest_idx * x_vec * 32) + src_vec_idx * 32 */
 	/* load gf_table's */
 	ldp	q_gft1_lo, q_gft1_hi, [x_tbl1], #32	/* x_tbl1 is post-added by #32 for each src vect */
 	ldp	q_gft2_lo, q_gft2_hi, [x_tbl2], #32
-	ldp	q_gft3_lo, q_gft3_hi, [x_tbl3], #32
-	ldp	q_gft4_lo, q_gft4_hi, [x_tbl4], #32
-	ldp	q_gft5_lo, q_gft5_hi, [x_tbl5], #32
-	ldp	q_gft6_lo, q_gft6_hi, [x_tbl6], #32
+
+	/* prefetch */
+	prfb	pldl2keep, p0, [x_tbl1]
+	prfb	pldl2keep, p0, [x_tbl2]
+
+	/* calc for next and prefetch */
+	add	x_vec_i, x_vec_i, #8		/* move x_vec_i to next */
+	ldr	x_ptr, [x_src, x_vec_i]		/* x_ptr: src base addr. */
 
 	/* dest 1 */
 	/* table indexing, ie. gf(2^8) multiplication */
@@ -176,39 +179,48 @@ gf_6vect_dot_prod_sve:
 	tbl	z_gft1_hi.b, {z_gft1_hi.b}, z_src_hi.b
 	/* exclusive or, ie. gf(2^8) add */
 	eor	z_dest1.d, z_gft1_lo.d, z_dest1.d
-	eor	z_dest1.d, z_gft1_hi.d, z_dest1.d
+	eor	z_dest1.d, z_dest1.d, z_gft1_hi.d
+
+	ldp	q_gft3_lo, q_gft3_hi, [x_tbl3], #32
+	ldp	q_gft4_lo, q_gft4_hi, [x_tbl4], #32
+	prfb	pldl2keep, p0, [x_tbl3]
+	prfb	pldl2keep, p0, [x_tbl4]
 
 	/* dest 2 */
 	tbl	z_gft2_lo.b, {z_gft2_lo.b}, z_src_lo.b
 	tbl	z_gft2_hi.b, {z_gft2_hi.b}, z_src_hi.b
 	eor	z_dest2.d, z_gft2_lo.d, z_dest2.d
-	eor	z_dest2.d, z_gft2_hi.d, z_dest2.d
+	eor	z_dest2.d, z_dest2.d, z_gft2_hi.d
 
 	/* dest 3 */
 	tbl	z_gft3_lo.b, {z_gft3_lo.b}, z_src_lo.b
 	tbl	z_gft3_hi.b, {z_gft3_hi.b}, z_src_hi.b
 	eor	z_dest3.d, z_gft3_lo.d, z_dest3.d
-	eor	z_dest3.d, z_gft3_hi.d, z_dest3.d
+	eor	z_dest3.d, z_dest3.d, z_gft3_hi.d
+
+	ldp	q_gft5_lo, q_gft5_hi, [x_tbl5], #32
+	ldp	q_gft6_lo, q_gft6_hi, [x_tbl6], #32
+	prfb	pldl2keep, p0, [x_tbl5]
+	prfb	pldl2keep, p0, [x_tbl6]
 
 	/* dest 4 */
 	tbl	z_gft4_lo.b, {z_gft4_lo.b}, z_src_lo.b
 	tbl	z_gft4_hi.b, {z_gft4_hi.b}, z_src_hi.b
 	eor	z_dest4.d, z_gft4_lo.d, z_dest4.d
-	eor	z_dest4.d, z_gft4_hi.d, z_dest4.d
+	eor	z_dest4.d, z_dest4.d, z_gft4_hi.d
 
 	/* dest 5 */
 	tbl	z_gft5_lo.b, {z_gft5_lo.b}, z_src_lo.b
 	tbl	z_gft5_hi.b, {z_gft5_hi.b}, z_src_hi.b
 	eor	z_dest5.d, z_gft5_lo.d, z_dest5.d
-	eor	z_dest5.d, z_gft5_hi.d, z_dest5.d
+	eor	z_dest5.d, z_dest5.d, z_gft5_hi.d
 
 	/* dest 6 */
 	tbl	z_gft6_lo.b, {z_gft6_lo.b}, z_src_lo.b
 	tbl	z_gft6_hi.b, {z_gft6_hi.b}, z_src_hi.b
 	eor	z_dest6.d, z_gft6_lo.d, z_dest6.d
-	eor	z_dest6.d, z_gft6_hi.d, z_dest6.d
+	eor	z_dest6.d, z_dest6.d, z_gft6_hi.d
 
-	add	x_vec_i, x_vec_i, #8		/* move x_vec_i to next */
 	cmp	x_vec_i, x_vec
 	blt	.Lloopsve_vl_vects
 /* end of Loop 2 */
