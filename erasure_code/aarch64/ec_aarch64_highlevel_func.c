@@ -174,11 +174,11 @@ void ec_encode_data_sve(int len, int k, int rows, unsigned char *g_tbls, unsigne
 		rows -= 7;
 	}
  */
-	while (rows >= 5) {
-		gf_5vect_dot_prod_sve(len, k, g_tbls, data, coding);
-		g_tbls += 5 * k * 32;
-		coding += 5;
-		rows -= 5;
+	while (rows >= 4) {
+		gf_4vect_dot_prod_sve(len, k, g_tbls, data, coding);
+		g_tbls += 4 * k * 32;
+		coding += 4;
+		rows -= 4;
 	}
 	while (rows >= 1) {
 		gf_vect_dot_prod_sve(len, k, g_tbls, data, *coding);
