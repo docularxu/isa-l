@@ -174,20 +174,33 @@ void ec_encode_data_sve(int len, int k, int rows, unsigned char *g_tbls, unsigne
 		rows -= 7;
 	}
  */
-/*	while (rows >= 2) {
-		gf_2vect_dot_prod_sve(len, k, g_tbls, data, coding);
-		g_tbls += 2 * k * 32;
-		coding += 2;
-		rows -= 2;
+	while (rows > 7) {
+		gf_6vect_dot_prod_sve(len, k, g_tbls, data, coding);
+		g_tbls += 6 * k * 32;
+		coding += 6;
+		rows -= 6;
 	}
- */	while (rows >= 1) {
+/*
+	while (rows >= 1) {
 		gf_vect_dot_prod_sve(len, k, g_tbls, data, *coding);
 		g_tbls += 1 * k * 32;
 		coding += 1;
 		rows -= 1;
 	}
+ */
 
-/*	switch (rows) {
+	switch (rows) {
+	case 7:
+#if 0
+		/* 5 + 2 */
+		gf_5vect_dot_prod_sve(len, k, g_tbls, data, coding);
+		g_tbls += 5 * k * 32;
+		coding += 5;
+		gf_2vect_dot_prod_sve(len, k, g_tbls, data, coding);
+#else
+		gf_7vect_dot_prod_sve(len, k, g_tbls, data, coding);
+#endif
+		break;
 	case 6:
 		gf_6vect_dot_prod_sve(len, k, g_tbls, data, coding);
 		break;
@@ -209,7 +222,6 @@ void ec_encode_data_sve(int len, int k, int rows, unsigned char *g_tbls, unsigne
 	default:
 		break;
 	}
-*/
 }
 
 void ec_encode_data_update_sve(int len, int k, int rows, int vec_i, unsigned char *g_tbls,
