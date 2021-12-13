@@ -43,7 +43,7 @@
 # ifndef TEST_CUSTOM
 // Uncached test.  Pull from large mem base.
 #  define TEST_SOURCES 32
-#  define GT_L3_CACHE  32*1024*1024	/* some number > last level cache */
+#  define GT_L3_CACHE  128*1024*1024	/* some number > last level cache */
 #  define TEST_LEN(m)  ((GT_L3_CACHE / m) & ~(64-1))
 #  define TEST_TYPE_STR "_cold"
 # else
@@ -107,10 +107,10 @@ int main(int argc, char *argv[])
 	struct perf start;
 
 	// Pick test parameters
-	m = 14;
-	k = 10;
-	nerrs = 4;
-	const u8 err_list[] = { 2, 4, 5, 7 };
+	m = 23;
+	k = 12;
+	nerrs = 11;
+	const u8 err_list[] = { 1, 2,3, 4, 5, 6, 7,8, 9,10, 11};
 
 	printf("erasure_code_perf: %dx%d %d\n", m, TEST_LEN(m), nerrs);
 
