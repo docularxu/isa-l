@@ -107,10 +107,10 @@ int main(int argc, char *argv[])
 	struct perf start;
 
 	// Pick test parameters
-	m = 17;
+	m = 18;
 	k = 10;
-	nerrs = 7;
-	const u8 err_list[] = { 1, 2, 4, 5, 7, 8, 9 };
+	nerrs = 8;
+	const u8 err_list[] = { 1, 2, 4, 5, 6, 7, 8, 9 };
 
 	printf("erasure_code_perf: %dx%d %d\n", m, TEST_LEN(m), nerrs);
 

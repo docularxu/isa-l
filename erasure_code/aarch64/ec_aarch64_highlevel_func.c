@@ -145,6 +145,8 @@ extern void gf_6vect_dot_prod_sve(int len, int vlen, unsigned char *gftbls,
 				   unsigned char **src, unsigned char **dest);
 extern void gf_7vect_dot_prod_sve(int len, int vlen, unsigned char *gftbls,
 				   unsigned char **src, unsigned char **dest);
+extern void gf_8vect_dot_prod_sve(int len, int vlen, unsigned char *gftbls,
+				   unsigned char **src, unsigned char **dest);
 extern void gf_vect_mad_sve(int len, int vec, int vec_i, unsigned char *gftbls,
 			     unsigned char *src, unsigned char *dest);
 extern void gf_2vect_mad_sve(int len, int vec, int vec_i, unsigned char *gftbls,
@@ -174,7 +176,7 @@ void ec_encode_data_sve(int len, int k, int rows, unsigned char *g_tbls, unsigne
 		rows -= 7;
 	}
  */
-	while (rows > 7) {
+	while (rows > 8) {
 		gf_6vect_dot_prod_sve(len, k, g_tbls, data, coding);
 		g_tbls += 6 * k * 32;
 		coding += 6;
@@ -190,6 +192,35 @@ void ec_encode_data_sve(int len, int k, int rows, unsigned char *g_tbls, unsigne
  */
 
 	switch (rows) {
+	case 8:
+#if 0
+		/* 5 + 3 */
+		gf_5vect_dot_prod_sve(len, k, g_tbls, data, coding);
+		g_tbls += 5 * k * 32;
+		coding += 5;
+		gf_3vect_dot_prod_sve(len, k, g_tbls, data, coding);
+#elif 0
+		/* 6 + 2 */
+		gf_6vect_dot_prod_sve(len, k, g_tbls, data, coding);
+		g_tbls += 6 * k * 32;
+		coding += 6;
+		gf_2vect_dot_prod_sve(len, k, g_tbls, data, coding);
+#elif 0
+		/* 7 + 1 */
+		gf_7vect_dot_prod_sve(len, k, g_tbls, data, coding);
+		g_tbls += 7 * k * 32;
+		coding += 7;
+		gf_vect_dot_prod_sve(len, k, g_tbls, data, *coding);
+#elif 0
+		/* 4 + 4 */
+		gf_4vect_dot_prod_sve(len, k, g_tbls, data, coding);
+		g_tbls += 4 * k * 32;
+		coding += 4;
+		gf_4vect_dot_prod_sve(len, k, g_tbls, data, coding);
+#else
+		gf_8vect_dot_prod_sve(len, k, g_tbls, data, coding);
+#endif
+		break;
 	case 7:
 #if 0
 		/* 5 + 2 */
