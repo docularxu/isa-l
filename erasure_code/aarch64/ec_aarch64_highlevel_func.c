@@ -176,7 +176,7 @@ void ec_encode_data_sve(int len, int k, int rows, unsigned char *g_tbls, unsigne
 		rows -= 7;
 	}
  */
-	while (rows > 8) {
+	while (rows > 11) {
 		gf_6vect_dot_prod_sve(len, k, g_tbls, data, coding);
 		g_tbls += 6 * k * 32;
 		coding += 6;
@@ -192,6 +192,81 @@ void ec_encode_data_sve(int len, int k, int rows, unsigned char *g_tbls, unsigne
  */
 
 	switch (rows) {
+	case 11:
+#if 0
+		/* 6 + 5 */
+		gf_6vect_dot_prod_sve(len, k, g_tbls, data, coding);
+		g_tbls += 6 * k * 32;
+		coding += 6;
+		gf_5vect_dot_prod_sve(len, k, g_tbls, data, coding);
+#elif 1
+		/* 7 + 4 */
+		gf_7vect_dot_prod_sve(len, k, g_tbls, data, coding);
+		g_tbls += 7 * k * 32;
+		coding += 7;
+		gf_4vect_dot_prod_sve(len, k, g_tbls, data, coding);
+#else
+		/* 8 + 3 */
+		gf_8vect_dot_prod_sve(len, k, g_tbls, data, coding);
+		g_tbls += 8 * k * 32;
+		coding += 8;
+		gf_3vect_dot_prod_sve(len, k, g_tbls, data, coding);
+#endif
+		break;
+	case 10:
+#if 0
+		/* 5 + 5 */
+		gf_5vect_dot_prod_sve(len, k, g_tbls, data, coding);
+		g_tbls += 5 * k * 32;
+		coding += 5;
+		gf_5vect_dot_prod_sve(len, k, g_tbls, data, coding);
+#elif 1
+		/* 6 + 4 */
+		gf_6vect_dot_prod_sve(len, k, g_tbls, data, coding);
+		g_tbls += 6 * k * 32;
+		coding += 6;
+		gf_4vect_dot_prod_sve(len, k, g_tbls, data, coding);
+#elif 0
+		/* 7 + 3 */
+		gf_7vect_dot_prod_sve(len, k, g_tbls, data, coding);
+		g_tbls += 7 * k * 32;
+		coding += 7;
+		gf_3vect_dot_prod_sve(len, k, g_tbls, data, coding);
+#else
+		/* 8 + 2 */
+		gf_8vect_dot_prod_sve(len, k, g_tbls, data, coding);
+		g_tbls += 8 * k * 32;
+		coding += 8;
+		gf_2vect_dot_prod_sve(len, k, g_tbls, data, coding);
+#endif
+		break;
+	case 9:
+#if 1
+		/* 5 + 4 */
+		gf_5vect_dot_prod_sve(len, k, g_tbls, data, coding);
+		g_tbls += 5 * k * 32;
+		coding += 5;
+		gf_4vect_dot_prod_sve(len, k, g_tbls, data, coding);
+#elif  0
+		/* 6 + 3 */
+		gf_6vect_dot_prod_sve(len, k, g_tbls, data, coding);
+		g_tbls += 6 * k * 32;
+		coding += 6;
+		gf_3vect_dot_prod_sve(len, k, g_tbls, data, coding);
+#elif  0
+		/* 7 + 2 */
+		gf_7vect_dot_prod_sve(len, k, g_tbls, data, coding);
+		g_tbls += 7 * k * 32;
+		coding += 7;
+		gf_2vect_dot_prod_sve(len, k, g_tbls, data, coding);
+#else
+		/* 8 + 1 */
+		gf_8vect_dot_prod_sve(len, k, g_tbls, data, coding);
+		g_tbls += 8 * k * 32;
+		coding += 8;
+		gf_vect_dot_prod_sve(len, k, g_tbls, data, *coding);
+#endif
+		break;
 	case 8:
 #if 0
 		/* 5 + 3 */
@@ -199,19 +274,19 @@ void ec_encode_data_sve(int len, int k, int rows, unsigned char *g_tbls, unsigne
 		g_tbls += 5 * k * 32;
 		coding += 5;
 		gf_3vect_dot_prod_sve(len, k, g_tbls, data, coding);
-#elif 0
+#elif  0
 		/* 6 + 2 */
 		gf_6vect_dot_prod_sve(len, k, g_tbls, data, coding);
 		g_tbls += 6 * k * 32;
 		coding += 6;
 		gf_2vect_dot_prod_sve(len, k, g_tbls, data, coding);
-#elif 0
+#elif 0 
 		/* 7 + 1 */
 		gf_7vect_dot_prod_sve(len, k, g_tbls, data, coding);
 		g_tbls += 7 * k * 32;
 		coding += 7;
 		gf_vect_dot_prod_sve(len, k, g_tbls, data, *coding);
-#elif 0
+#elif 1
 		/* 4 + 4 */
 		gf_4vect_dot_prod_sve(len, k, g_tbls, data, coding);
 		g_tbls += 4 * k * 32;
@@ -228,6 +303,18 @@ void ec_encode_data_sve(int len, int k, int rows, unsigned char *g_tbls, unsigne
 		g_tbls += 5 * k * 32;
 		coding += 5;
 		gf_2vect_dot_prod_sve(len, k, g_tbls, data, coding);
+#elif 0
+		/* 4 + 3 */
+		gf_4vect_dot_prod_sve(len, k, g_tbls, data, coding);
+		g_tbls += 4 * k * 32;
+		coding += 4;
+		gf_3vect_dot_prod_sve(len, k, g_tbls, data, coding);
+#elif 0
+		/* 6 + 1 */
+		gf_6vect_dot_prod_sve(len, k, g_tbls, data, coding);
+		g_tbls += 6 * k * 32;
+		coding += 6;
+		gf_vect_dot_prod_sve(len, k, g_tbls, data, *coding);
 #else
 		gf_7vect_dot_prod_sve(len, k, g_tbls, data, coding);
 #endif
