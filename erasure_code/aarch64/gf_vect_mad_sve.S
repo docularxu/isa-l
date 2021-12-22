@@ -74,19 +74,6 @@ gf_vect_mad_sve:
 
 	/* Load with NEON instruction ldp */
 	ldp	q_gft1_lo, q_gft1_hi, [x_tbl]
-	/* It can also be done with SVE instructions, eg:
-	ptrue	p0.b
-	ld1rqb	z_gft1_lo.b, p0/Z, [x_tbl]
-	ld1rqb	z_gft1_hi.b, p0/Z, [x_tbl, #16]
-	 */
-
-/* save d8 ~ d15 to stack */
-/*	sub	sp, sp, #64
-	stp	d8, d9, [sp]
-	stp	d10, d11, [sp, #16]
-	stp	d12, d13, [sp, #32]
-	stp	d14, d15, [sp, #48]
-*/
 
 	mov	x_pos, #0
 
@@ -119,14 +106,6 @@ gf_vect_mad_sve:
 	incb	x_pos
 
 	b	.Lloopsve_vl
-
-/* restore d8 ~ d15 */
-/*	ldp	d8,  d9,  [sp]
-	ldp	d10, d11, [sp, #16]
-	ldp	d12, d13, [sp, #32]
-	ldp	d14, d15, [sp, #48]
-	add	sp, sp, #64
-*/
 
 .return_pass:
 	mov	w_ret, #0
