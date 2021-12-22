@@ -97,6 +97,9 @@ gf_vect_mul_neon:
 
 	movi	v_mask0f.16b, #0x0f
 	add	x_src_end, x_src, x_len
+	/* TODO Load with NEON instruction ldp
+	 * ldp	q_gft1_lo, q_gft1_hi, [x_tbl]
+	 */
 	ldr	q_gft1_lo, [x_tbl]
 	ldr	q_gft1_hi, [x_tbl, #16]
 
