@@ -80,8 +80,8 @@ DEFINE_INTERFACE_DISPATCHER(gf_vect_mul)
 {
 	unsigned long auxval = getauxval(AT_HWCAP);
 
-//	if (auxval & HWCAP_SVE)
-//		return PROVIDER_INFO(gf_vect_mul_sve);
+	if (auxval & HWCAP_SVE)
+		return PROVIDER_INFO(gf_vect_mul_sve);
 	if (auxval & HWCAP_ASIMD)
 		return PROVIDER_INFO(gf_vect_mul_neon);
 	return PROVIDER_BASIC(gf_vect_mul);

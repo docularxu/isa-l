@@ -56,4 +56,5 @@ lsrc_aarch64 += \
 		erasure_code/aarch64/gf_6vect_dot_prod_sve.S \
 		erasure_code/aarch64/gf_7vect_dot_prod_sve.S \
 		erasure_code/aarch64/gf_8vect_dot_prod_sve.S \
+		erasure_code/aarch64/gf_vect_mul_sve.S \
 		erasure_code/aarch64/ec_multibinary_arm.S
