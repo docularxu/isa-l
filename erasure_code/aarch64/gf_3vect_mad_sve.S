@@ -123,7 +123,6 @@ gf_3vect_mad_sve:
 	/* load dest data, governed by p0 */
 	ld1b	z_dest1.b, p0/z, [x_dest1, x_pos]
 	ld1b	z_dest2.b, p0/z, [x_dest2, x_pos]
-	ld1b	z_dest3.b, p0/z, [x_dest3, x_pos]
 
 	/* dest1 */
 	/* table indexing, ie. gf(2^8) multiplication */
@@ -136,6 +135,10 @@ gf_3vect_mad_sve:
 	/* dest2 */
 	tbl	z_tmp_lo.b, {z_gft2_lo.b}, z_src_lo.b
 	tbl	z_tmp_hi.b, {z_gft2_hi.b}, z_src_hi.b
+
+	ld1b	z_dest3.b, p0/z, [x_dest3, x_pos]
+	st1b	z_dest1.b, p0, [x_dest1, x_pos]
+
 	eor	z_dest2.d, z_tmp_lo.d, z_dest2.d
 	eor	z_dest2.d, z_tmp_hi.d, z_dest2.d
 
@@ -146,7 +149,6 @@ gf_3vect_mad_sve:
 	eor	z_dest3.d, z_tmp_hi.d, z_dest3.d
 
 	/* store dest data, governed by p0 */
-	st1b	z_dest1.b, p0, [x_dest1, x_pos]
 	st1b	z_dest2.b, p0, [x_dest2, x_pos]
 	st1b	z_dest3.b, p0, [x_dest3, x_pos]
 	/* increment one vector length */
