@@ -113,6 +113,9 @@ gf_3vect_mad_sve:
 	whilelo	p0.b, x_pos, x_len
 	b.none	.return_pass
 
+	prfb	pldl2strm, p0, [x_dest1, x_pos]
+	prfb	pldl2strm, p0, [x_dest2, x_pos]
+
 	/* load src data, governed by p0 */
 	ld1b	z_src.b,  p0/z, [x_src, x_pos]
 
@@ -123,6 +126,7 @@ gf_3vect_mad_sve:
 	/* load dest data, governed by p0 */
 	ld1b	z_dest1.b, p0/z, [x_dest1, x_pos]
 	ld1b	z_dest2.b, p0/z, [x_dest2, x_pos]
+	prfb	pldl2strm, p0, [x_dest3, x_pos]
 
 	/* dest1 */
 	/* table indexing, ie. gf(2^8) multiplication */
