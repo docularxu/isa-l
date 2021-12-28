@@ -102,6 +102,9 @@ gf_2vect_mad_sve:
 	whilelo	p0.b, x_pos, x_len
 	b.none	.return_pass
 
+	prfb	pldl2strm, p0, [x_dest1, x_pos]
+	prfb	pldl2strm, p0, [x_dest2, x_pos]
+
 	/* load src data, governed by p0 */
 	ld1b	z_src.b,  p0/z, [x_src, x_pos]
 
